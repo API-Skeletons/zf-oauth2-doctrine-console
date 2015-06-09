@@ -3,9 +3,11 @@
 return array(
     'controllers' => array(
         'invokables' => array(
-            'ZF\OAuth2\Doctrine\Console\Controller\Jwt' => 
+            'ZF\OAuth2\Doctrine\Console\Controller\Client' =>
+                'ZF\OAuth2\Doctrine\Console\Controller\ClientController',
+            'ZF\OAuth2\Doctrine\Console\Controller\Jwt' =>
                 'ZF\OAuth2\Doctrine\Console\Controller\JwtController',
-            'ZF\OAuth2\Doctrine\Console\Controller\PublicKey' => 
+            'ZF\OAuth2\Doctrine\Console\Controller\PublicKey' =>
                 'ZF\OAuth2\Doctrine\Console\Controller\PublicKeyController',
         ),
     ),
@@ -13,6 +15,15 @@ return array(
     'console' => array(
         'router' => array(
             'routes' => array(
+                'oauth2-client-create' => array(
+                    'options' => array(
+                        'route'    => 'oauth2:client:create',
+                        'defaults' => array(
+                            'controller' => 'ZF\OAuth2\Doctrine\Console\Controller\Client',
+                            'action'     => 'create'
+                        ),
+                    ),
+                ),
                 'oauth2-jwt-create' => array(
                     'options' => array(
                         'route'    => 'oauth2:jwt:create',

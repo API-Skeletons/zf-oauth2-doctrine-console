@@ -8,7 +8,6 @@ namespace ZF\OAuth2\Doctrine\Console;
 
 use ZF\OAuth2\Client\Service\OAuth2Service;
 use Zend\ModuleManager\Feature\ConfigProviderInterface;
-use Zend\ModuleManager\Feature\ServiceProviderInterface;
 use Zend\ModuleManager\Feature\ConsoleUsageProviderInterface;
 use Zend\Console\Adapter\AdapterInterface as Console;
 
@@ -17,12 +16,12 @@ use Zend\Console\Adapter\AdapterInterface as Console;
  */
 class Module implements
     ConfigProviderInterface,
-    ServiceProviderInterface,
     ConsoleUsageProviderInterface
 {
     public function getConsoleUsage(Console $console)
     {
         return array(
+            'oauth2:client:create' => 'Create a client',
             'oauth2:public-key:create' => 'Create a public key for a client',
             'oauth2:jwt:create' => 'Generate a JWT entry',
             'oauth2:jwt:generate' => 'Generate a JWT assertion',

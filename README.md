@@ -29,8 +29,6 @@ Add this module to your application's configuration:
 Console Routes
 ------------------
 
-To make JWT easier to test command line tools are included.
-
 * `oauth2:jwt:create` Create a new JWT for a given client.  This JWT will be used by an oauth2 connection requesting a grant_type of `urn:ietf:params:oauth:grant-type:jwt-bearer`.  Creating the JWT puts the oauth2 connection request's public key in place in the OAuth2 tables.
 
 * `oauth2:public-key:create` Create the public/private key record for the given client.  This data is used to sign JWT access tokens.  Each client may have only one key pair.
