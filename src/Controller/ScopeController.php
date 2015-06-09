@@ -8,6 +8,7 @@ use Zend\Console\Request as ConsoleRequest;
 use Zend\Console\Adapter\AdapterInterface as Console;
 use Zend\Console\ColorInterface as Color;
 use Zend\Console\Prompt;
+use RuntimeException;
 
 class ScopeController extends AbstractActionController
 {
@@ -59,9 +60,12 @@ class ScopeController extends AbstractActionController
         )->find($this->getRequest()->getParam('id'));
 
         // Get the Scope
+        $console->write("Current Value: " . $scopeEntity->getScope() . "\n", Color::CYAN);
         $scope = Prompt\Line::prompt("Scope: ", false);
         $scopeEntity->setScope($scope);
 
+        $currentDefault = ($scopeEntity->getIsDefault()) ? 'Y': 'N';
+        $console->write("Current Value: " . $currentDefault . "\n", Color::CYAN);
         $default = Prompt\Confirm::prompt('Is this a default scope? [y/n] ', 'y', 'n');
         $scopeEntity->setIsDefault($default == 'y');
 

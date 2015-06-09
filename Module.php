@@ -21,14 +21,22 @@ class Module implements
     public function getConsoleUsage(Console $console)
     {
         return array(
-            'oauth2:client:create' => 'Create a client',
-            'oauth2:scope:create' => 'Create a scope',
+            'oauth2:client:create' => 'Create client',
+            'oauth2:client:list' => 'List clients',
+            'oauth2:client:update --id=#' => 'Update client',
+            'oauth2:client:delete --id=#' => 'Delete client',
+
+            'oauth2:scope:create' => 'Create scope',
             'oauth2:scope:list' => 'List scopes',
             'oauth2:scope:update --id=#' => 'Update scope',
             'oauth2:scope:delete --id=#' => 'Delete scope',
-            'oauth2:public-key:create' => 'Create a public key for a client',
-            'oauth2:jwt:create' => 'Generate a JWT entry',
-            'oauth2:jwt:generate' => 'Generate a JWT assertion',
+
+            'oauth2:public-key:create --id=#' => 'Create public key.  id is a client record.',
+            'oauth2:public-key:delete --id=#' => 'Delete public key.  id is a client record.',
+
+            'oauth2:jwt:create' => 'Create a JWT entry',
+            'oauth2:jwt:list' => 'List JWT entries',
+            'oauth2:jwt:delete' => 'Delete a JWT entry',
         );
     }
 

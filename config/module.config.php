@@ -26,6 +26,33 @@ return array(
                         ),
                     ),
                 ),
+                'oauth2-client-list' => array(
+                    'options' => array(
+                        'route'    => 'oauth2:client:list',
+                        'defaults' => array(
+                            'controller' => 'ZF\OAuth2\Doctrine\Console\Controller\Client',
+                            'action'     => 'list'
+                        ),
+                    ),
+                ),
+                'oauth2-client-update' => array(
+                    'options' => array(
+                        'route'    => 'oauth2:client:update --id=:id',
+                        'defaults' => array(
+                            'controller' => 'ZF\OAuth2\Doctrine\Console\Controller\Client',
+                            'action'     => 'update'
+                        ),
+                    ),
+                ),
+                'oauth2-client-delete' => array(
+                    'options' => array(
+                        'route'    => 'oauth2:client:delete --id=:id',
+                        'defaults' => array(
+                            'controller' => 'ZF\OAuth2\Doctrine\Console\Controller\Client',
+                            'action'     => 'delete'
+                        ),
+                    ),
+                ),
                 'oauth2-scope-create' => array(
                     'options' => array(
                         'route'    => 'oauth2:scope:create',
@@ -73,10 +100,19 @@ return array(
                 ),
                 'oauth2-public-key-create' => array(
                     'options' => array(
-                        'route'    => 'oauth2:public-key:create',
+                        'route'    => 'oauth2:public-key:create --id=:id',
                         'defaults' => array(
                             'controller' => 'ZF\OAuth2\Doctrine\Console\Controller\PublicKey',
                             'action'     => 'create'
+                        ),
+                    ),
+                ),
+                'oauth2-public-key-delete' => array(
+                    'options' => array(
+                        'route'    => 'oauth2:public-key:delete --id=:id',
+                        'defaults' => array(
+                            'controller' => 'ZF\OAuth2\Doctrine\Console\Controller\PublicKey',
+                            'action'     => 'delete'
                         ),
                     ),
                 ),

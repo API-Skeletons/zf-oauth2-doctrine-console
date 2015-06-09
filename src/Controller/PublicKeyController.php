@@ -1,6 +1,6 @@
 <?php
 
-namespace ZF\OAuth2\Doctrine\Controller;
+namespace ZF\OAuth2\Doctrine\Console\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
@@ -25,22 +25,9 @@ class PublicKeyController extends AbstractActionController
             throw new RuntimeException('You can only use this action from a console.');
         }
 
-        // Get the client id
-        $clientId = '';
-        while (!$clientId) {
-            $clientId = Prompt\Line::prompt("Client ID: ", false, 255);
-            $client = $objectManager->getRepository('ZF\OAuth2\Doctrine\Entity\Client')->findOneBy(array(
-                'clientId' => $clientId,
-            ));
-            if (!$client) {
-                $console->write($clientId . " not found\n", Color::RED);
-                $clientId = '';
-            }
-            if ($client and sizeof($client->getPublicKey())) {
-                $console->write($clientId . " already has a public key\n", Color::RED);
-                $clientId = '';
-            }
-        }
+        $client = $objectManager->getRepository(
+            $config['mapping']['ZF\OAuth2\Doctrine\Mapper\Client']['entity']
+        )->find($this->getRequest()->getParam('id'));
 
         // Get public key path
         $publicKeyPath= '';
@@ -75,6 +62,38 @@ class PublicKeyController extends AbstractActionController
         $objectManager->persist($publicKeyEntity);
         $objectManager->flush();
 
-        $console->write("Public key has been created\n", Color::GREEN);
+        $console->write("Public key created\n", Color::GREEN);
+    }
+
+    public function deleteAction()
+    {
+        $applicationConfig = $this->getServiceLocator()->get('config');
+        $config = $applicationConfig['zf-oauth2-doctrine']['storage_settings'];
+        $console = $this->getServiceLocator()->get('console');
+        $objectManager = $this->getServiceLocator()->get($config['object_manager']);
+
+        // Make sure that we are running in a console and the user has not tricked our
+        // application into running this action from a public web server.
+        $request = $this->getRequest();
+        if (!$request instanceof ConsoleRequest) {
+            throw new RuntimeException('You can only use this action from a console.');
+        }
+
+        $client = $objectManager->getRepository(
+            $config['mapping']['ZF\OAuth2\Doctrine\Mapper\Client']['entity']
+        )->find($this->getRequest()->getParam('id'));
+
+        if (!$client) {
+            $console->write("Client not found\n", Color::RED);
+            return;
+        }
+
+        if ($client->getPublicKey()) {
+            $objectManager->remove($client->getPublicKey());
+            $objectManager->flush();
+            $console->write("Public key deleted\n", Color::GREEN);
+        } else {
+            $console->write("Public key does not exist for client\n", Color::YELLOW);
+        }
     }
 }
