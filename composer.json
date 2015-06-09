@@ -1,0 +1,25 @@
+{
+    "name": "stuki/zf-oauth2-doctrine-console",
+    "description": "Console management of an Apigility Doctrine OAuth2 server",
+    "license": "BSD-3-Clause",
+    "keywords": [
+        "doctrine",
+        "console",
+        "oauth2",
+        "apigility"
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">=5.3.3",
+        "zfcampus/zf-oauth2-doctrine": "*"
+    }
+    "autoload": {
+        "psr-4": {
+            "ZF\\OAuth2\\Doctrine\\Console\\": "src/",
+            "ZFTest\\OAuth2\\Doctrine\\Console\\": "test/"
+        },
+        "classmap": [
+            "Module.php"
+        ]
+    }
+}
