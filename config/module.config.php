@@ -26,15 +26,6 @@ return array(
                         ),
                     ),
                 ),
-                'oauth2-client-list' => array(
-                    'options' => array(
-                        'route'    => 'oauth2:client:list',
-                        'defaults' => array(
-                            'controller' => 'ZF\OAuth2\Doctrine\Console\Controller\Client',
-                            'action'     => 'list'
-                        ),
-                    ),
-                ),
                 'oauth2-client-update' => array(
                     'options' => array(
                         'route'    => 'oauth2:client:update --id=:id',
@@ -53,21 +44,21 @@ return array(
                         ),
                     ),
                 ),
+                'oauth2-client-list' => array(
+                    'options' => array(
+                        'route'    => 'oauth2:client:list',
+                        'defaults' => array(
+                            'controller' => 'ZF\OAuth2\Doctrine\Console\Controller\Client',
+                            'action'     => 'list'
+                        ),
+                    ),
+                ),
                 'oauth2-scope-create' => array(
                     'options' => array(
                         'route'    => 'oauth2:scope:create',
                         'defaults' => array(
                             'controller' => 'ZF\OAuth2\Doctrine\Console\Controller\Scope',
                             'action'     => 'create'
-                        ),
-                    ),
-                ),
-                'oauth2-scope-list' => array(
-                    'options' => array(
-                        'route'    => 'oauth2:scope:list',
-                        'defaults' => array(
-                            'controller' => 'ZF\OAuth2\Doctrine\Console\Controller\Scope',
-                            'action'     => 'list'
                         ),
                     ),
                 ),
@@ -86,6 +77,15 @@ return array(
                         'defaults' => array(
                             'controller' => 'ZF\OAuth2\Doctrine\Console\Controller\Scope',
                             'action'     => 'delete'
+                        ),
+                    ),
+                ),
+                'oauth2-scope-list' => array(
+                    'options' => array(
+                        'route'    => 'oauth2:scope:list',
+                        'defaults' => array(
+                            'controller' => 'ZF\OAuth2\Doctrine\Console\Controller\Scope',
+                            'action'     => 'list'
                         ),
                     ),
                 ),
@@ -116,21 +116,21 @@ return array(
                         ),
                     ),
                 ),
-                'oauth2-jwt-list' => array(
-                    'options' => array(
-                        'route'    => 'oauth2:jwt:list',
-                        'defaults' => array(
-                            'controller' => 'ZF\OAuth2\Doctrine\Console\Controller\Jwt',
-                            'action'     => 'list'
-                        ),
-                    ),
-                ),
                 'oauth2-jwt-delete' => array(
                     'options' => array(
                         'route'    => 'oauth2:jwt:delete --id=:id',
                         'defaults' => array(
                             'controller' => 'ZF\OAuth2\Doctrine\Console\Controller\Jwt',
                             'action'     => 'delete'
+                        ),
+                    ),
+                ),
+                'oauth2-jwt-list' => array(
+                    'options' => array(
+                        'route'    => 'oauth2:jwt:list',
+                        'defaults' => array(
+                            'controller' => 'ZF\OAuth2\Doctrine\Console\Controller\Jwt',
+                            'action'     => 'list'
                         ),
                     ),
                 ),
