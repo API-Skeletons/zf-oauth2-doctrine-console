@@ -15,6 +15,8 @@ class PublicKeyController extends AbstractActionController
 {
     public function createAction()
     {
+        $applicationConfig = $this->getServiceLocator()->get('config');
+        $config = $applicationConfig['zf-oauth2-doctrine']['storage_settings'];
         $console = $this->getServiceLocator()->get('console');
         $objectManager = $this->getServiceLocator()->get('doctrine.entitymanager.orm_default');
 
@@ -23,6 +25,11 @@ class PublicKeyController extends AbstractActionController
         $request = $this->getRequest();
         if (!$request instanceof ConsoleRequest) {
             throw new RuntimeException('You can only use this action from a console.');
+        }
+
+        if (!$client) {
+            $console->write("Client not found", Color::RED);
+            return;
         }
 
         $client = $objectManager->getRepository(

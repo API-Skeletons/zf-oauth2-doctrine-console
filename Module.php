@@ -34,9 +34,9 @@ class Module implements
             'oauth2:public-key:create --id=#' => 'Create public key.  id is a client record.',
             'oauth2:public-key:delete --id=#' => 'Delete public key.  id is a client record.',
 
-            'oauth2:jwt:create' => 'Create a JWT entry',
+            'oauth2:jwt:create --id=#' => 'Create a JWT entry.  id is a client record.',
             'oauth2:jwt:list' => 'List JWT entries',
-            'oauth2:jwt:delete' => 'Delete a JWT entry',
+            'oauth2:jwt:delete --id=#' => 'Delete a JWT entry.  id is a jwt record.',
         );
     }
 

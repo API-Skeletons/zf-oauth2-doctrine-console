@@ -1,6 +1,6 @@
 <?php
 
-namespace ZF\OAuth2\Doctrine\Controller;
+namespace ZF\OAuth2\Doctrine\Console\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
@@ -15,6 +15,8 @@ class JwtController extends AbstractActionController
 {
     public function createAction()
     {
+        $applicationConfig = $this->getServiceLocator()->get('config');
+        $config = $applicationConfig['zf-oauth2-doctrine']['storage_settings'];
         $console = $this->getServiceLocator()->get('console');
         $objectManager = $this->getServiceLocator()->get('doctrine.entitymanager.orm_default');
 
@@ -25,17 +27,13 @@ class JwtController extends AbstractActionController
             throw new RuntimeException('You can only use this action from a console.');
         }
 
-        // Get the client id
-        $clientId = '';
-        while (!$clientId) {
-            $clientId = Prompt\Line::prompt("Client ID: ", false, 255);
-            $client = $objectManager->getRepository('ZF\OAuth2\Doctrine\Entity\Client')->findOneBy(array(
-                'clientId' => $clientId,
-            ));
-            if (!$client) {
-                $console->write('Client ID ' . $clientId . ' not found', Color::RED);
-                $clientId = '';
-            }
+        $client = $objectManager->getRepository(
+            $config['mapping']['ZF\OAuth2\Doctrine\Mapper\Client']['entity']
+        )->find($this->getRequest()->getParam('id'));
+
+        if (!$client) {
+            $console->write("Client not found", Color::RED);
+            return;
         }
 
         // Get the subject
@@ -56,6 +54,68 @@ class JwtController extends AbstractActionController
         $objectManager->persist($jwt);
         $objectManager->flush();
 
-        $console->write("JWT has been created\n", Color::GREEN);
+        $console->write("JWT created\n", Color::GREEN);
+    }
+
+    public function listAction()
+    {
+        $applicationConfig = $this->getServiceLocator()->get('config');
+        $config = $applicationConfig['zf-oauth2-doctrine']['storage_settings'];
+        $console = $this->getServiceLocator()->get('console');
+        $objectManager = $this->getServiceLocator()->get($config['object_manager']);
+
+        // Make sure that we are running in a console and the user has not tricked our
+        // application into running this action from a public web server.
+        $request = $this->getRequest();
+        if (!$request instanceof ConsoleRequest) {
+            throw new RuntimeException('You can only use this action from a console.');
+        }
+
+        $jwts = $objectManager->getRepository(
+            $config['mapping']['ZF\OAuth2\Doctrine\Mapper\Jwt']['entity']
+        )->findBy(array(), array('id' => 'ASC'));
+
+        $console->write("id\tclient\tclientId\tsubject\n", Color::YELLOW);
+        foreach ($jwts as $jwt) {
+            $console->write(
+                  $jwt->getId()
+                . "\t"
+                . $jwt->getClient()->getId()
+                . "\t"
+                . $jwt->getClient()->getClientId()
+                . "\t"
+                . $jwt->getSubject()
+                . "\n"
+                , Color::CYAN);
+        }
+    }
+
+    public function deleteAction()
+    {
+        $applicationConfig = $this->getServiceLocator()->get('config');
+        $config = $applicationConfig['zf-oauth2-doctrine']['storage_settings'];
+        $console = $this->getServiceLocator()->get('console');
+        $objectManager = $this->getServiceLocator()->get($config['object_manager']);
+
+        // Make sure that we are running in a console and the user has not tricked our
+        // application into running this action from a public web server.
+        $request = $this->getRequest();
+        if (!$request instanceof ConsoleRequest) {
+            throw new RuntimeException('You can only use this action from a console.');
+        }
+
+        $jwt = $objectManager->getRepository(
+            $config['mapping']['ZF\OAuth2\Doctrine\Mapper\Jwt']['entity']
+        )->find($this->getRequest()->getParam('id'));
+
+        if (!$jwt) {
+            $console->write("JWT not found\n", Color::RED);
+            return;
+        }
+
+        $objectManager->remove($jwt);
+        $objectManager->flush();
+
+        $console->write("JWT deleted\n", Color::GREEN);
     }
 }
