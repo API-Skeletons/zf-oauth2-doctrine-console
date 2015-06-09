@@ -113,22 +113,35 @@ class ClientController extends AbstractActionController
         // Add scope(s)
         $clientScopes = new ArrayCollection();
         while (true) {
-            $scopes = $objectManager->getRepository(
+            $scopeArray = $objectManager->getRepository(
                 $config['mapping']['ZF\OAuth2\Doctrine\Mapper\Scope']['entity']
-            )->findBy(array(), array('scope' => 'DESC'));
+            )->findBy(array(), array('id' => 'ASC'));
 
-            foreach ($clientScopes as $scope) {
-                $scopes->removeElement($scope);
+            $scopes = new ArrayCollection();
+            foreach ($scopeArray as $scope) {
+                if (! $clientScopes->contains($scope)) {
+                    $scopes->add($scope);
+                }
             }
 
-            $options = array();
-            foreach ($clientScopes as $scope) {
+            $options = array(
+                0 => 'Done Selecting Scopes',
+            );
+            foreach ($scopes as $scope) {
                 $options[$scope->getId()] = $scope->getScope();
             }
 
             if (!$options) {
                 $console->write("No Scopes exist.\n", Color::RED);
                 break;
+            }
+
+            if (sizeof($clientScopes)) {
+                $console->write("Selected Scopes\n", Color::YELLOW);
+
+                foreach ($clientScopes as $scope) {
+                    $console->write($scope->getScope() . "\n", Color::CYAN);
+                }
             }
 
             $answer = Prompt\Select::prompt(
@@ -145,10 +158,11 @@ class ClientController extends AbstractActionController
                 }
                 break;
             } else {
-                foreach ($clientScopes as $scope) {
+                foreach ($scopes as $scope) {
                     if ($scope->getId() == $answer) {
                         $clientScopes->add($scope);
-                        continue;
+                        echo "$answer selected\n";
+                        break;
                     }
                 }
             }

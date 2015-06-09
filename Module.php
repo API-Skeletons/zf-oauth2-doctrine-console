@@ -22,6 +22,10 @@ class Module implements
     {
         return array(
             'oauth2:client:create' => 'Create a client',
+            'oauth2:scope:create' => 'Create a scope',
+            'oauth2:scope:list' => 'List scopes',
+            'oauth2:scope:update --id=#' => 'Update scope',
+            'oauth2:scope:delete --id=#' => 'Delete scope',
             'oauth2:public-key:create' => 'Create a public key for a client',
             'oauth2:jwt:create' => 'Generate a JWT entry',
             'oauth2:jwt:generate' => 'Generate a JWT assertion',
