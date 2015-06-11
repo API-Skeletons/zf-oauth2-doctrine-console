@@ -103,8 +103,9 @@ class ClientController extends AbstractActionController
         // Get Grant Type(s)
         $console->write("Default Grant Types\n", Color::YELLOW);
         $console->write("authorization_code\n", Color::CYAN);
-        $console->write("access_token\n", Color::CYAN);
+        $console->write("client_credentials\n", Color::CYAN);
         $console->write("refresh_token\n", Color::CYAN);
+        $console->write("implicit\n", Color::CYAN);
         $console->write("urn:ietf:params:oauth:grant-type:jwt-bearer\n", Color::CYAN);
 
         $grantType = Prompt\Line::prompt("Grant Types, comma delimited.  Not required: ", true, 255);
