@@ -1,7 +1,7 @@
 {
-    "name": "stuki/zf-oauth2-doctrine-console",
+    "name": "apigility-skeletons/zf-oauth2-doctrine-console",
     "description": "Console management of an Apigility Doctrine OAuth2 server",
-    "license": "BSD-3-Clause",
+    "license": "proprietary",
     "keywords": [
         "doctrine",
         "console",
