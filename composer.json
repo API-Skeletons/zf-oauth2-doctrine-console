@@ -1,5 +1,5 @@
 {
-    "name": "apigility-skeletons/zf-oauth2-doctrine-console",
+    "name": "api-skeletons/zf-oauth2-doctrine-console",
     "description": "Console management of an Apigility Doctrine OAuth2 server",
     "license": "proprietary",
     "keywords": [
