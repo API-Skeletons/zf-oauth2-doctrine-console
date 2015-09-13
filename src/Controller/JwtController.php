@@ -16,7 +16,7 @@ class JwtController extends AbstractActionController
     public function createAction()
     {
         $applicationConfig = $this->getServiceLocator()->get('config');
-        $config = $applicationConfig['zf-oauth2-doctrine']['storage_settings'];
+        $config = $applicationConfig['zf-oauth2-doctrine']['default'];
         $console = $this->getServiceLocator()->get('console');
         $objectManager = $this->getServiceLocator()->get('doctrine.entitymanager.orm_default');
 
@@ -60,7 +60,7 @@ class JwtController extends AbstractActionController
     public function listAction()
     {
         $applicationConfig = $this->getServiceLocator()->get('config');
-        $config = $applicationConfig['zf-oauth2-doctrine']['storage_settings'];
+        $config = $applicationConfig['zf-oauth2-doctrine']['default'];
         $console = $this->getServiceLocator()->get('console');
         $objectManager = $this->getServiceLocator()->get($config['object_manager']);
 
@@ -93,7 +93,7 @@ class JwtController extends AbstractActionController
     public function deleteAction()
     {
         $applicationConfig = $this->getServiceLocator()->get('config');
-        $config = $applicationConfig['zf-oauth2-doctrine']['storage_settings'];
+        $config = $applicationConfig['zf-oauth2-doctrine']['default'];
         $console = $this->getServiceLocator()->get('console');
         $objectManager = $this->getServiceLocator()->get($config['object_manager']);
 
