@@ -10,8 +10,8 @@
     ],
     "minimum-stability": "dev",
     "require": {
-        "php": ">=5.3.3",
-        "zfcampus/zf-oauth2-doctrine": "~0.3"
+        "php": ">=5.5",
+        "zfcampus/zf-oauth2-doctrine": "^1.0"
     },
     "autoload": {
         "psr-4": {
