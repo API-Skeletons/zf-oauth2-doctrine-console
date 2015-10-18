@@ -28,7 +28,7 @@ class JwtController extends AbstractActionController
         }
 
         $client = $objectManager->getRepository(
-            $config['mapping']['ZF\OAuth2\Doctrine\Mapper\Client']['entity']
+            $config['mapping']['Client']['entity']
         )->find($this->getRequest()->getParam('id'));
 
         if (!$client) {
@@ -72,7 +72,7 @@ class JwtController extends AbstractActionController
         }
 
         $jwts = $objectManager->getRepository(
-            $config['mapping']['ZF\OAuth2\Doctrine\Mapper\Jwt']['entity']
+            $config['mapping']['Jwt']['entity']
         )->findBy(array(), array('id' => 'ASC'));
 
         $console->write("id\tclient\tclientId\tsubject\n", Color::YELLOW);
@@ -105,7 +105,7 @@ class JwtController extends AbstractActionController
         }
 
         $jwt = $objectManager->getRepository(
-            $config['mapping']['ZF\OAuth2\Doctrine\Mapper\Jwt']['entity']
+            $config['mapping']['Jwt']['entity']
         )->find($this->getRequest()->getParam('id'));
 
         if (!$jwt) {

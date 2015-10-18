@@ -28,14 +28,14 @@ class ClientController extends AbstractActionController
             throw new RuntimeException('You can only use this action from a console.');
         }
 
-        $clientEntity = new $config['mapping']['ZF\OAuth2\Doctrine\Mapper\Client']['entity'];
+        $clientEntity = new $config['mapping']['Client']['entity'];
 
         // Get the User
         while(true) {
             $userId = Prompt\Line::prompt("User ID.  Not required. ? for list: ", true, 255);
             if ($userId == '?') {
                 $users = $objectManager->getRepository(
-                    $config['mapping']['ZF\OAuth2\Doctrine\Mapper\User']['entity']
+                    $config['mapping']['User']['entity']
                 )->findAll();
 
                 foreach ($users as $user) {
@@ -47,7 +47,7 @@ class ClientController extends AbstractActionController
 
             if ($userId) {
                 $user = $objectManager->getRepository(
-                    $config['mapping']['ZF\OAuth2\Doctrine\Mapper\User']['entity']
+                    $config['mapping']['User']['entity']
                 )->find($userId);
 
                 if (!$user) {
@@ -66,7 +66,7 @@ class ClientController extends AbstractActionController
         while (!$clientId) {
             $clientId = Prompt\Line::prompt("Client ID: ", false, 255);
             $client = $objectManager->getRepository(
-                $config['mapping']['ZF\OAuth2\Doctrine\Mapper\Client']['entity']
+                $config['mapping']['Client']['entity']
             )->findOneBy(array(
                 'clientId' => $clientId,
             ));
@@ -115,7 +115,7 @@ class ClientController extends AbstractActionController
         $clientScopes = new ArrayCollection();
         while (true) {
             $scopeArray = $objectManager->getRepository(
-                $config['mapping']['ZF\OAuth2\Doctrine\Mapper\Scope']['entity']
+                $config['mapping']['Scope']['entity']
             )->findBy(array(), array('id' => 'ASC'));
 
             $scopes = new ArrayCollection();
@@ -190,7 +190,7 @@ class ClientController extends AbstractActionController
         }
 
         $clientEntity = $objectManager->getRepository(
-            $config['mapping']['ZF\OAuth2\Doctrine\Mapper\Client']['entity']
+            $config['mapping']['Client']['entity']
         )->find($this->getRequest()->getParam('id'));
 
         if (!$clientEntity) {
@@ -209,7 +209,7 @@ class ClientController extends AbstractActionController
             $userId = Prompt\Line::prompt("User ID.  Not required. ? for list: ", true, 255);
             if ($userId == '?') {
                 $users = $objectManager->getRepository(
-                    $config['mapping']['ZF\OAuth2\Doctrine\Mapper\User']['entity']
+                    $config['mapping']['User']['entity']
                 )->findAll();
 
                 foreach ($users as $user) {
@@ -221,7 +221,7 @@ class ClientController extends AbstractActionController
 
             if ($userId) {
                 $user = $objectManager->getRepository(
-                    $config['mapping']['ZF\OAuth2\Doctrine\Mapper\User']['entity']
+                    $config['mapping']['User']['entity']
                 )->find($userId);
 
                 if (!$user) {
@@ -241,7 +241,7 @@ class ClientController extends AbstractActionController
             $console->write("Current Value: " . $clientEntity->getClientId() . "\n", Color::CYAN);
             $clientId = Prompt\Line::prompt("Client ID: ", false, 255);
             $client = $objectManager->getRepository(
-                $config['mapping']['ZF\OAuth2\Doctrine\Mapper\Client']['entity']
+                $config['mapping']['Client']['entity']
             )->findOneBy(array(
                 'clientId' => $clientId,
             ));
@@ -299,7 +299,7 @@ class ClientController extends AbstractActionController
             }
 
             $scopeArray = $objectManager->getRepository(
-                $config['mapping']['ZF\OAuth2\Doctrine\Mapper\Scope']['entity']
+                $config['mapping']['Scope']['entity']
             )->findBy(array(), array('id' => 'ASC'));
 
             $scopes = new ArrayCollection();
@@ -377,7 +377,7 @@ class ClientController extends AbstractActionController
         }
 
         $clients = $objectManager->getRepository(
-            $config['mapping']['ZF\OAuth2\Doctrine\Mapper\Client']['entity']
+            $config['mapping']['Client']['entity']
         )->findBy(array(), array('id' => 'ASC'));
 
         $console->write("id\tclientId\tredirectUri\tgrantType\n", Color::YELLOW);
@@ -410,7 +410,7 @@ class ClientController extends AbstractActionController
         }
 
         $client = $objectManager->getRepository(
-            $config['mapping']['ZF\OAuth2\Doctrine\Mapper\Client']['entity']
+            $config['mapping']['Client']['entity']
         )->find($this->getRequest()->getParam('id'));
 
         if (!$client) {

@@ -26,7 +26,7 @@ class ScopeController extends AbstractActionController
             throw new RuntimeException('You can only use this action from a console.');
         }
 
-        $scopeEntity = new $config['mapping']['ZF\OAuth2\Doctrine\Mapper\Scope']['entity'];
+        $scopeEntity = new $config['mapping']['Scope']['entity'];
 
         // Get the Scope
         $scope = Prompt\Line::prompt("Scope: ", false);
@@ -56,7 +56,7 @@ class ScopeController extends AbstractActionController
         }
 
         $scopeEntity = $objectManager->getRepository(
-            $config['mapping']['ZF\OAuth2\Doctrine\Mapper\Scope']['entity']
+            $config['mapping']['Scope']['entity']
         )->find($this->getRequest()->getParam('id'));
 
         // Get the Scope
@@ -89,7 +89,7 @@ class ScopeController extends AbstractActionController
         }
 
         $scopes = $objectManager->getRepository(
-            $config['mapping']['ZF\OAuth2\Doctrine\Mapper\Scope']['entity']
+            $config['mapping']['Scope']['entity']
         )->findBy(array(), array('id' => 'ASC'));
 
         $console->write("id\tdefault\tscope\n", Color::YELLOW);
@@ -114,7 +114,7 @@ class ScopeController extends AbstractActionController
         }
 
         $scope = $objectManager->getRepository(
-            $config['mapping']['ZF\OAuth2\Doctrine\Mapper\Scope']['entity']
+            $config['mapping']['Scope']['entity']
         )->find($this->getRequest()->getParam('id'));
 
         if (!$scope) {
