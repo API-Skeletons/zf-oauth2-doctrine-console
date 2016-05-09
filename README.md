@@ -14,7 +14,7 @@ Installation
 Installation of this module uses composer. For composer documentation, please refer to [getcomposer.org](http://getcomposer.org/).
 
 ```sh
-$ php composer.phar require stuki/zf-oauth2-doctrine-console "*""
+$ php composer.phar require api-skeletons/zf-oauth2-doctrine-console "*"
 ```
 
 Add this module to your application's configuration:
@@ -55,5 +55,5 @@ Console Routes
 
 * `oauth2:jwt:list` List all JWT.
 
-For the connecting side of JWT, [zf-oauth2-client](https://github.com/TomHAnderson/zf-oauth2-client) provides a command line tool to generate a JWT reqeust.  See also http://bshaffer.github.io/oauth2-server-php-docs/grant-types/jwt-bearer/
+For the connecting side of JWT, [zf-oauth2-client](https://github.com/API-Skeletons/zf-oauth2-client) provides a command line tool to generate a JWT reqeust.  See also http://bshaffer.github.io/oauth2-server-php-docs/grant-types/jwt-bearer/
 
