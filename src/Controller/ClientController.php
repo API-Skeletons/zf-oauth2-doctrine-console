@@ -92,7 +92,7 @@ class ClientController extends AbstractActionController
             }
 
             $bcrypt = new Bcrypt();
-            $bcrypt->setCost(14);
+            $bcrypt->setCost($config['bcrypt_cost']);
             $clientEntity->setSecret($bcrypt->create($secret));
         }
 
