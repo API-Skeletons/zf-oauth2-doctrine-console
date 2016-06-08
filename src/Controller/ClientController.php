@@ -9,7 +9,6 @@ use Zend\Console\Adapter\AdapterInterface as Console;
 use Zend\Console\ColorInterface as Color;
 use Zend\Console\Prompt;
 use RuntimeException;
-use Zend\Crypt\Password\Bcrypt;
 use Doctrine\Common\Collections\ArrayCollection;
 
 class ClientController extends AbstractActionController
@@ -91,9 +90,13 @@ class ClientController extends AbstractActionController
                 continue;
             }
 
-            $bcrypt = new Bcrypt();
-            $bcrypt->setCost($config['bcrypt_cost']);
-            $clientEntity->setSecret($bcrypt->create($secret));
+            $clientEntity->setSecret(   
+                password_hash(
+                    $secret, 
+                    PASSWORD_BCRYPT, 
+                    ['cost' => $config['bcrypt_cost']]
+                )
+            );
         }
 
         // Get the Redirect URI
@@ -266,9 +269,13 @@ class ClientController extends AbstractActionController
                 continue;
             }
 
-            $bcrypt = new Bcrypt();
-            $bcrypt->setCost(14);
-            $clientEntity->setSecret($bcrypt->create($secret));
+            $clientEntity->setSecret(   
+                password_hash(
+                    $secret, 
+                    PASSWORD_BCRYPT, 
+                    ['cost' => $config['bcrypt_cost']]
+                )
+            );
         }
 
         // Get the Redirect URI
