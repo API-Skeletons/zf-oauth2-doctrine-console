@@ -1,19 +1,6 @@
 <?php
 
 return array(
-    'controllers' => array(
-        'invokables' => array(
-            'ZF\OAuth2\Doctrine\Console\Controller\Client' =>
-                'ZF\OAuth2\Doctrine\Console\Controller\ClientController',
-            'ZF\OAuth2\Doctrine\Console\Controller\Scope' =>
-                'ZF\OAuth2\Doctrine\Console\Controller\ScopeController',
-            'ZF\OAuth2\Doctrine\Console\Controller\Jwt' =>
-                'ZF\OAuth2\Doctrine\Console\Controller\JwtController',
-            'ZF\OAuth2\Doctrine\Console\Controller\PublicKey' =>
-                'ZF\OAuth2\Doctrine\Console\Controller\PublicKeyController',
-        ),
-    ),
-
     'console' => array(
         'router' => array(
             'routes' => array(

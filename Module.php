@@ -6,10 +6,13 @@
 
 namespace ZF\OAuth2\Doctrine\Console;
 
-use ZF\OAuth2\Client\Service\OAuth2Service;
 use Zend\ModuleManager\Feature\ConfigProviderInterface;
 use Zend\ModuleManager\Feature\ConsoleUsageProviderInterface;
 use Zend\Console\Adapter\AdapterInterface as Console;
+use ZF\OAuth2\Doctrine\Console\Controller\ScopeController;
+use ZF\OAuth2\Doctrine\Console\Controller\ClientController;
+use ZF\OAuth2\Doctrine\Console\Controller\JwtController;
+use ZF\OAuth2\Doctrine\Console\Controller\PublicKeyController;
 
 /**
  * ZF2 module
@@ -40,6 +43,41 @@ class Module implements
         );
     }
 
+    public function getControllerConfig() {
+        return array(
+            'factories' => array(
+                'ZF\OAuth2\Doctrine\Console\Controller\Scope' => function ($sm) {   
+                    $config = $sm->getServiceLocator()->get('Config');
+                    $console = $sm->getServiceLocator()->get('Console');
+                    $objectManager = $sm->getServiceLocator()->get($config['zf-oauth2-doctrine']['default']['object_manager']);
+
+                    return new ScopeController($config, $console, $objectManager);
+                },
+                'ZF\OAuth2\Doctrine\Console\Controller\Client' => function ($sm) {
+                    $config = $sm->getServiceLocator()->get('Config');
+                    $console = $sm->getServiceLocator()->get('Console');
+                    $objectManager = $sm->getServiceLocator()->get($config['zf-oauth2-doctrine']['default']['object_manager']);
+
+                    return new ClientController($config, $console, $objectManager);
+                },
+                'ZF\OAuth2\Doctrine\Console\Controller\Jwt' => function ($sm) {
+                    $config = $sm->getServiceLocator()->get('Config');
+                    $console = $sm->getServiceLocator()->get('Console');
+                    $objectManager = $sm->getServiceLocator()->get($config['zf-oauth2-doctrine']['default']['object_manager']);
+
+                    return new JwtController($config, $console, $objectManager);
+                },
+                'ZF\OAuth2\Doctrine\Console\Controller\PublicKey' => function ($sm) {
+                    $config = $sm->getServiceLocator()->get('Config');
+                    $console = $sm->getServiceLocator()->get('Console');
+                    $objectManager = $sm->getServiceLocator()->get($config['zf-oauth2-doctrine']['default']['object_manager']);
+
+                    return new PublicKeyController($config, $console, $objectManager);
+                }
+            )
+        );
+    }
+    
     /**
      * Retrieve autoloader configuration
      *
