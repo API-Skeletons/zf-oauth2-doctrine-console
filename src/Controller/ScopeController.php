@@ -3,21 +3,32 @@
 namespace ZF\OAuth2\Doctrine\Console\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
-use Zend\View\Model\ViewModel;
 use Zend\Console\Request as ConsoleRequest;
 use Zend\Console\Adapter\AdapterInterface as Console;
 use Zend\Console\ColorInterface as Color;
 use Zend\Console\Prompt;
 use RuntimeException;
+use Zend\Console\Adapter\Posix;
+use Doctrine\ORM\EntityManager;
 
 class ScopeController extends AbstractActionController
 {
+    protected $config;
+    protected $console;
+    protected $objectManager;
+
+    public function __construct(Array $config, Posix $console, EntityManager $objectManager)
+    {
+        $this->config = $config;
+        $this->console = $console;
+        $this->objectManager = $objectManager;
+    }
+
     public function createAction()
     {
-        $applicationConfig = $this->getServiceLocator()->get('config');
-        $config = $applicationConfig['zf-oauth2-doctrine']['default'];
-        $console = $this->getServiceLocator()->get('console');
-        $objectManager = $this->getServiceLocator()->get($config['object_manager']);
+        $config = $this->config['zf-oauth2-doctrine']['default'];
+        $console = $this->console;
+        $objectManager = $this->objectManager;
 
         // Make sure that we are running in a console and the user has not tricked our
         // application into running this action from a public web server.
@@ -43,10 +54,9 @@ class ScopeController extends AbstractActionController
 
     public function updateAction()
     {
-        $applicationConfig = $this->getServiceLocator()->get('config');
-        $config = $applicationConfig['zf-oauth2-doctrine']['default'];
-        $console = $this->getServiceLocator()->get('console');
-        $objectManager = $this->getServiceLocator()->get($config['object_manager']);
+        $config = $this->config['zf-oauth2-doctrine']['default'];
+        $console = $this->console;
+        $objectManager = $this->objectManager;
 
         // Make sure that we are running in a console and the user has not tricked our
         // application into running this action from a public web server.
@@ -76,10 +86,9 @@ class ScopeController extends AbstractActionController
 
     public function listAction()
     {
-        $applicationConfig = $this->getServiceLocator()->get('config');
-        $config = $applicationConfig['zf-oauth2-doctrine']['default'];
-        $console = $this->getServiceLocator()->get('console');
-        $objectManager = $this->getServiceLocator()->get($config['object_manager']);
+        $config = $this->config['zf-oauth2-doctrine']['default'];
+        $console = $this->console;
+        $objectManager = $this->objectManager;
 
         // Make sure that we are running in a console and the user has not tricked our
         // application into running this action from a public web server.
@@ -101,10 +110,9 @@ class ScopeController extends AbstractActionController
 
     public function deleteAction()
     {
-        $applicationConfig = $this->getServiceLocator()->get('config');
-        $config = $applicationConfig['zf-oauth2-doctrine']['default'];
-        $console = $this->getServiceLocator()->get('console');
-        $objectManager = $this->getServiceLocator()->get($config['object_manager']);
+        $config = $this->config['zf-oauth2-doctrine']['default'];
+        $console = $this->console;
+        $objectManager = $this->objectManager;
 
         // Make sure that we are running in a console and the user has not tricked our
         // application into running this action from a public web server.
