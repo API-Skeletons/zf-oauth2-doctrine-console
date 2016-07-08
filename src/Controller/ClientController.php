@@ -90,9 +90,10 @@ class ClientController extends AbstractActionController
         $secret = '';
         $secretVerify = false;
         while ($secret !== $secretVerify) {
-            $secretPrompt = new Prompt\Password("Secret: ");
+            // there is a problem with Prompt\Password in Windows consoles...
+            $secretPrompt = new Prompt\Line("Secret: ");
             $secret = $secretPrompt->show();
-            $secretPrompt = new Prompt\Password("Verify Secret: ");
+            $secretPrompt = new Prompt\Line("Verify Secret: ");
             $secretVerify = $secretPrompt->show();
 
             if ($secret !== $secretVerify) {
