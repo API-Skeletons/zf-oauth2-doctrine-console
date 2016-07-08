@@ -9,7 +9,6 @@ use Zend\Console\ColorInterface as Color;
 use Zend\Console\Prompt;
 use RuntimeException;
 use Doctrine\Common\Collections\ArrayCollection;
-use Zend\Console\Adapter\Posix;
 use Doctrine\ORM\EntityManager;
 
 class ClientController extends AbstractActionController
@@ -18,7 +17,7 @@ class ClientController extends AbstractActionController
     protected $console;
     protected $objectManager;
 
-    public function __construct(Array $config, Posix $console, EntityManager $objectManager)
+    public function __construct(Array $config, Console $console, EntityManager $objectManager)
     {
         $this->config = $config;
         $this->console = $console;
@@ -101,10 +100,10 @@ class ClientController extends AbstractActionController
                 continue;
             }
 
-            $clientEntity->setSecret(   
+            $clientEntity->setSecret(
                 password_hash(
-                    $secret, 
-                    PASSWORD_BCRYPT, 
+                    $secret,
+                    PASSWORD_BCRYPT,
                     ['cost' => $config['bcrypt_cost']]
                 )
             );
@@ -279,10 +278,10 @@ class ClientController extends AbstractActionController
                 continue;
             }
 
-            $clientEntity->setSecret(   
+            $clientEntity->setSecret(
                 password_hash(
-                    $secret, 
-                    PASSWORD_BCRYPT, 
+                    $secret,
+                    PASSWORD_BCRYPT,
                     ['cost' => $config['bcrypt_cost']]
                 )
             );

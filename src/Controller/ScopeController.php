@@ -8,7 +8,6 @@ use Zend\Console\Adapter\AdapterInterface as Console;
 use Zend\Console\ColorInterface as Color;
 use Zend\Console\Prompt;
 use RuntimeException;
-use Zend\Console\Adapter\Posix;
 use Doctrine\ORM\EntityManager;
 
 class ScopeController extends AbstractActionController
@@ -17,7 +16,7 @@ class ScopeController extends AbstractActionController
     protected $console;
     protected $objectManager;
 
-    public function __construct(Array $config, Posix $console, EntityManager $objectManager)
+    public function __construct(Array $config, Console $console, EntityManager $objectManager)
     {
         $this->config = $config;
         $this->console = $console;

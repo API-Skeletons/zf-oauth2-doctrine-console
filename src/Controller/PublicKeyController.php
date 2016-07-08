@@ -9,7 +9,6 @@ use Zend\Console\ColorInterface as Color;
 use Zend\Console\Prompt;
 use RuntimeException;
 use ZF\OAuth2\Doctrine\Entity;
-use Zend\Console\Adapter\Posix;
 use Doctrine\ORM\EntityManager;
 
 class PublicKeyController extends AbstractActionController
@@ -18,7 +17,7 @@ class PublicKeyController extends AbstractActionController
     protected $console;
     protected $objectManager;
 
-    public function __construct(Array $config, Posix $console, EntityManager $objectManager)
+    public function __construct(Array $config, Console $console, EntityManager $objectManager)
     {
         $this->config = $config;
         $this->console = $console;
