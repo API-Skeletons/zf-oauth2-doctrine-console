@@ -11,7 +11,7 @@
     "minimum-stability": "dev",
     "require": {
         "php": ">=5.5",
-        "api-skeletons/zf-oauth2-doctrine": "*"
+        "api-skeletons/zf-oauth2-doctrine": "^1.1"
     },
     "autoload": {
         "psr-4": {
@@ -21,5 +21,12 @@
         "classmap": [
             "Module.php"
         ]
+    },
+    "extra": {
+        "zf": {
+            "module": [
+                "ZF\\OAuth2\\Doctrine\\Console"
+            ]
+        }
     }
 }
