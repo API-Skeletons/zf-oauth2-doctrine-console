@@ -7,14 +7,14 @@ return array(
         'invokables' => array(
             'ZF\OAuth2\Doctrine\Console\Controller\Scope' =>
                 'ZF\OAuth2\Doctrine\Console\Controller\ScopeController',
-            'ZF\OAuth2\Doctrine\Console\Controller\Jwt' =>
-                'ZF\OAuth2\Doctrine\Console\Controller\JwtController',
             'ZF\OAuth2\Doctrine\Console\Controller\PublicKey' =>
                 'ZF\OAuth2\Doctrine\Console\Controller\PublicKeyController',
         ),
         'factories' => [
             Controller\ClientController::class =>
                 Controller\ClientControllerFactory::class,
+            Controller\JwtController::class =>
+                Controller\JwtControllerFactory::class,
         ],
     ),
 
@@ -113,27 +113,27 @@ return array(
                 ),
                 'oauth2-jwt-create' => array(
                     'options' => array(
-                        'route'    => 'oauth2:jwt:create --id=:id',
+                        'route'    => 'oauth2:jwt:create --id=:id [--config=]',
                         'defaults' => array(
-                            'controller' => 'ZF\OAuth2\Doctrine\Console\Controller\Jwt',
+                            'controller' => Controller\JwtController::class,
                             'action'     => 'create'
                         ),
                     ),
                 ),
                 'oauth2-jwt-delete' => array(
                     'options' => array(
-                        'route'    => 'oauth2:jwt:delete --id=:id',
+                        'route'    => 'oauth2:jwt:delete --id=:id [--config=]',
                         'defaults' => array(
-                            'controller' => 'ZF\OAuth2\Doctrine\Console\Controller\Jwt',
+                            'controller' => Controller\JwtController::class,
                             'action'     => 'delete'
                         ),
                     ),
                 ),
                 'oauth2-jwt-list' => array(
                     'options' => array(
-                        'route'    => 'oauth2:jwt:list',
+                        'route'    => 'oauth2:jwt:list [--config=]',
                         'defaults' => array(
-                            'controller' => 'ZF\OAuth2\Doctrine\Console\Controller\Jwt',
+                            'controller' => Controller\JwtController::class,
                             'action'     => 'list'
                         ),
                     ),

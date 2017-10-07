@@ -10,29 +10,43 @@ use Zend\Console\ColorInterface as Color;
 use Zend\Console\Prompt;
 use RuntimeException;
 use ZF\OAuth2\Doctrine\Entity;
+use Doctrine\Common\Persistence\ObjectManager;
+use DoctrineModule\Persistence\ObjectManagerAwareInterface;
+use DoctrineModule\Persistence\ProvidesObjectManager;
 
-class JwtController extends AbstractActionController
+class JwtController extends AbstractActionController implements
+    ObjectManagerAwareInterface
 {
+    use ProvidesObjectManager;
+
+    private $config;
+    private $console;
+
+    public function __construct(ObjectManager $objectManager, Console $console, array $config)
+    {
+        $this->setObjectManager($objectManager);
+        $this->console = $console;
+        $this->config = $config;
+    }
+
     public function createAction()
     {
-        $applicationConfig = $this->getServiceLocator()->get('config');
-        $config = $applicationConfig['zf-oauth2-doctrine']['default'];
-        $console = $this->getServiceLocator()->get('console');
-        $objectManager = $this->getServiceLocator()->get('doctrine.entitymanager.orm_default');
+        $configSection = ($this->params()->fromRoute('config')) ?: 'default';
+        $config = $this->config[$configSection];
 
         // Make sure that we are running in a console and the user has not tricked our
         // application into running this action from a public web server.
         $request = $this->getRequest();
-        if (!$request instanceof ConsoleRequest) {
+        if (! $request instanceof ConsoleRequest) {
             throw new RuntimeException('You can only use this action from a console.');
         }
 
-        $client = $objectManager->getRepository(
+        $client = $this->getObjectManager()->getRepository(
             $config['mapping']['Client']['entity']
         )->find($this->getRequest()->getParam('id'));
 
-        if (!$client) {
-            $console->write("Client not found", Color::RED);
+        if (! $client) {
+            $this->console->writeLine("Client not found", Color::RED);
             return;
         }
 
@@ -51,33 +65,31 @@ class JwtController extends AbstractActionController
         $jwt->setSubject($subject);
         $jwt->setPublicKey($publicKey);
 
-        $objectManager->persist($jwt);
-        $objectManager->flush();
+        $this->getObjectManager()->persist($jwt);
+        $this->getObjectManager()->flush();
 
-        $console->write("JWT created\n", Color::GREEN);
+        $this->console->writeLine("JWT created", Color::GREEN);
     }
 
     public function listAction()
     {
-        $applicationConfig = $this->getServiceLocator()->get('config');
-        $config = $applicationConfig['zf-oauth2-doctrine']['default'];
-        $console = $this->getServiceLocator()->get('console');
-        $objectManager = $this->getServiceLocator()->get($config['object_manager']);
+        $configSection = ($this->params()->fromRoute('config')) ?: 'default';
+        $config = $this->config[$configSection];
 
         // Make sure that we are running in a console and the user has not tricked our
         // application into running this action from a public web server.
         $request = $this->getRequest();
-        if (!$request instanceof ConsoleRequest) {
+        if (! $request instanceof ConsoleRequest) {
             throw new RuntimeException('You can only use this action from a console.');
         }
 
-        $jwts = $objectManager->getRepository(
+        $jwts = $this->getObjectManager()->getRepository(
             $config['mapping']['Jwt']['entity']
         )->findBy(array(), array('id' => 'ASC'));
 
-        $console->write("id\tclient\tclientId\tsubject\n", Color::YELLOW);
+        $this->console->writeLine("id\tclient\tclientId\tsubject", Color::YELLOW);
         foreach ($jwts as $jwt) {
-            $console->write(
+            $this->console->writeLine(
                   $jwt->getId()
                 . "\t"
                 . $jwt->getClient()->getId()
@@ -85,37 +97,34 @@ class JwtController extends AbstractActionController
                 . $jwt->getClient()->getClientId()
                 . "\t"
                 . $jwt->getSubject()
-                . "\n"
                 , Color::CYAN);
         }
     }
 
     public function deleteAction()
     {
-        $applicationConfig = $this->getServiceLocator()->get('config');
-        $config = $applicationConfig['zf-oauth2-doctrine']['default'];
-        $console = $this->getServiceLocator()->get('console');
-        $objectManager = $this->getServiceLocator()->get($config['object_manager']);
+        $configSection = ($this->params()->fromRoute('config')) ?: 'default';
+        $config = $this->config[$configSection];
 
         // Make sure that we are running in a console and the user has not tricked our
         // application into running this action from a public web server.
         $request = $this->getRequest();
-        if (!$request instanceof ConsoleRequest) {
+        if (! $request instanceof ConsoleRequest) {
             throw new RuntimeException('You can only use this action from a console.');
         }
 
-        $jwt = $objectManager->getRepository(
+        $jwt = $this->getObjectManager()->getRepository(
             $config['mapping']['Jwt']['entity']
         )->find($this->getRequest()->getParam('id'));
 
-        if (!$jwt) {
-            $console->write("JWT not found\n", Color::RED);
+        if (! $jwt) {
+            $this->console->writeLine("JWT not found", Color::RED);
             return;
         }
 
-        $objectManager->remove($jwt);
-        $objectManager->flush();
+        $this->getObjectManager()->remove($jwt);
+        $this->getObjectManager()->flush();
 
-        $console->write("JWT deleted\n", Color::GREEN);
+        $this->console->writeLine("JWT deleted", Color::GREEN);
     }
 }
