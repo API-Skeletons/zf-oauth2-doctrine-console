@@ -11,20 +11,34 @@ use Zend\Console\Prompt;
 use RuntimeException;
 use Zend\Crypt\Password\Bcrypt;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Persistence\ObjectManager;
+use DoctrineModule\Persistence\ObjectManagerAwareInterface;
+use DoctrineModule\Persistence\ProvidesObjectManager;
 
-class ClientController extends AbstractActionController
+final class ClientController extends AbstractActionController implements
+    ObjectManagerAwareInterface
 {
+    use ProvidesObjectManager;
+
+    private $config;
+    private $console;
+
+    public function __construct(ObjectManager $objectManager, Console $console, array $config)
+    {
+        $this->setObjectManager($objectManager);
+        $this->console = $console;
+        $this->config = $config;
+    }
+
     public function createAction()
     {
-        $applicationConfig = $this->getServiceLocator()->get('config');
-        $config = $applicationConfig['zf-oauth2-doctrine']['default'];
-        $console = $this->getServiceLocator()->get('console');
-        $objectManager = $this->getServiceLocator()->get($config['object_manager']);
+        $configSection = ($this->params()->fromRoute('config')) ?: 'default';
+        $config = $this->config[$configSection];
 
         // Make sure that we are running in a console and the user has not tricked our
         // application into running this action from a public web server.
         $request = $this->getRequest();
-        if (!$request instanceof ConsoleRequest) {
+        if (! $request instanceof ConsoleRequest) {
             throw new RuntimeException('You can only use this action from a console.');
         }
 
@@ -34,24 +48,24 @@ class ClientController extends AbstractActionController
         while(true) {
             $userId = Prompt\Line::prompt("User ID.  Not required. ? for list: ", true, 255);
             if ($userId == '?') {
-                $users = $objectManager->getRepository(
+                $users = $this->getObjectManager()->getRepository(
                     $config['mapping']['User']['entity']
                 )->findAll();
 
                 foreach ($users as $user) {
-                    $console->write($user->getId() . "\t" . $user->getEmail() . "\n", Color::CYAN);
+                    $this->console->write($user->getId() . "\t" . $user->getEmail() . "\n", Color::CYAN);
                 }
 
                 continue;
             }
 
             if ($userId) {
-                $user = $objectManager->getRepository(
+                $user = $this->getObjectManager()->getRepository(
                     $config['mapping']['User']['entity']
                 )->find($userId);
 
                 if (!$user) {
-                    $console->write("User ID $userId not found.\n", Color::RED);
+                    $this->console->write("User ID $userId not found.\n", Color::RED);
                     continue;
                 }
 
@@ -65,13 +79,13 @@ class ClientController extends AbstractActionController
         $clientId = '';
         while (!$clientId) {
             $clientId = Prompt\Line::prompt("Client ID: ", false, 255);
-            $client = $objectManager->getRepository(
+            $client = $this->getObjectManager()->getRepository(
                 $config['mapping']['Client']['entity']
             )->findOneBy(array(
                 'clientId' => $clientId,
             ));
             if ($client) {
-                $console->write('Client ID ' . $clientId . ' already exists', Color::RED);
+                $this->console->write('Client ID ' . $clientId . ' already exists', Color::RED);
                 $clientId = '';
             }
         }
@@ -87,7 +101,7 @@ class ClientController extends AbstractActionController
             $secretVerify = $secretPrompt->show();
 
             if ($secret !== $secretVerify) {
-                $console->write("Password verification does not match.  Please try again.\n", Color::YELLOW);
+                $this->console->write("Password verification does not match.  Please try again.\n", Color::YELLOW);
                 continue;
             }
 
@@ -101,12 +115,12 @@ class ClientController extends AbstractActionController
         $clientEntity->setRedirectUri($redirectUri);
 
         // Get Grant Type(s)
-        $console->write("Default Grant Types\n", Color::YELLOW);
-        $console->write("authorization_code\n", Color::CYAN);
-        $console->write("client_credentials\n", Color::CYAN);
-        $console->write("refresh_token\n", Color::CYAN);
-        $console->write("implicit\n", Color::CYAN);
-        $console->write("urn:ietf:params:oauth:grant-type:jwt-bearer\n", Color::CYAN);
+        $this->console->write("Default Grant Types\n", Color::YELLOW);
+        $this->console->write("authorization_code\n", Color::CYAN);
+        $this->console->write("client_credentials\n", Color::CYAN);
+        $this->console->write("refresh_token\n", Color::CYAN);
+        $this->console->write("implicit\n", Color::CYAN);
+        $this->console->write("urn:ietf:params:oauth:grant-type:jwt-bearer\n", Color::CYAN);
 
         $grantType = Prompt\Line::prompt("Grant Types, comma delimited.  Not required: ", true, 255);
         $clientEntity->setGrantType(explode(',', $grantType));
@@ -114,7 +128,7 @@ class ClientController extends AbstractActionController
         // Add scope(s)
         $clientScopes = new ArrayCollection();
         while (true) {
-            $scopeArray = $objectManager->getRepository(
+            $scopeArray = $this->getObjectManager()->getRepository(
                 $config['mapping']['Scope']['entity']
             )->findBy(array(), array('id' => 'ASC'));
 
@@ -132,16 +146,16 @@ class ClientController extends AbstractActionController
                 $options[$scope->getId()] = $scope->getScope();
             }
 
-            if (!$options) {
-                $console->write("No Scopes exist.\n", Color::RED);
+            if (! $options) {
+                $this->console->write("No Scopes exist.\n", Color::RED);
                 break;
             }
 
             if (sizeof($clientScopes)) {
-                $console->write("Selected Scopes\n", Color::YELLOW);
+                $this->console->write("Selected Scopes\n", Color::YELLOW);
 
                 foreach ($clientScopes as $scope) {
-                    $console->write($scope->getScope() . "\n", Color::CYAN);
+                    $this->console->write($scope->getScope() . "\n", Color::CYAN);
                 }
             }
 
@@ -152,7 +166,7 @@ class ClientController extends AbstractActionController
                 false
             );
 
-            if (!$answer) {
+            if (! $answer) {
                 foreach ($clientScopes as $scope) {
                     $scope->addClient($clientEntity);
                     $clientEntity->addScope($scope);
@@ -169,18 +183,16 @@ class ClientController extends AbstractActionController
             }
         }
 
-        $objectManager->persist($clientEntity);
-        $objectManager->flush();
+        $this->getObjectManager()->persist($clientEntity);
+        $this->getObjectManager()->flush();
 
-        $console->write("Client created\n", Color::GREEN);
+        $this->console->write("Client created\n", Color::GREEN);
     }
 
     public function updateAction()
     {
-        $applicationConfig = $this->getServiceLocator()->get('config');
-        $config = $applicationConfig['zf-oauth2-doctrine']['default'];
-        $console = $this->getServiceLocator()->get('console');
-        $objectManager = $this->getServiceLocator()->get($config['object_manager']);
+        $configSection = ($this->params()->fromRoute('config')) ?: 'default';
+        $config = $this->config[$configSection];
 
         // Make sure that we are running in a console and the user has not tricked our
         // application into running this action from a public web server.
@@ -189,26 +201,27 @@ class ClientController extends AbstractActionController
             throw new RuntimeException('You can only use this action from a console.');
         }
 
-        $clientEntity = $objectManager->getRepository(
+        $clientEntity = $this->getObjectManager()->getRepository(
             $config['mapping']['Client']['entity']
         )->find($this->getRequest()->getParam('id'));
 
-        if (!$clientEntity) {
-            $console->write("Client not found", Color::RED);
+        if (! $clientEntity) {
+            $this->console->write("Client not found", Color::RED);
+
             return;
         }
 
         // Get the User
         while(true) {
             if ($clientEntity->getUser()) {
-                $console->write("Current Value: " . $clientEntity->getUser()->getId() . "\n", Color::CYAN);
+                $this->console->write("Current Value: " . $clientEntity->getUser()->getId() . "\n", Color::CYAN);
             } else {
-                $console->write("Current Value: none\n", Color::CYAN);
+                $this->console->write("Current Value: none\n", Color::CYAN);
             }
 
             $userId = Prompt\Line::prompt("User ID.  Not required. ? for list: ", true, 255);
             if ($userId == '?') {
-                $users = $objectManager->getRepository(
+                $users = $this->getObjectManager()->getRepository(
                     $config['mapping']['User']['entity']
                 )->findAll();
 
@@ -220,12 +233,13 @@ class ClientController extends AbstractActionController
             }
 
             if ($userId) {
-                $user = $objectManager->getRepository(
+                $user = $this->getObjectManager()->getRepository(
                     $config['mapping']['User']['entity']
                 )->find($userId);
 
-                if (!$user) {
-                    $console->write("User ID $userId not found.\n", Color::RED);
+                if (! $user) {
+                    $this->console->write("User ID $userId not found.\n", Color::RED);
+
                     continue;
                 }
 
@@ -237,16 +251,17 @@ class ClientController extends AbstractActionController
 
         // Get the client id
         $clientId = '';
-        while (!$clientId) {
-            $console->write("Current Value: " . $clientEntity->getClientId() . "\n", Color::CYAN);
+        while (! $clientId) {
+            $this->console->write("Current Value: " . $clientEntity->getClientId() . "\n", Color::CYAN);
             $clientId = Prompt\Line::prompt("Client ID: ", false, 255);
-            $client = $objectManager->getRepository(
+            $client = $this->getObjectManager()->getRepository(
                 $config['mapping']['Client']['entity']
             )->findOneBy(array(
                 'clientId' => $clientId,
             ));
+
             if ($client && ($client->getId() !== $clientEntity->getId())) {
-                $console->write('Client ID ' . $clientId . ' already exists', Color::RED);
+                $this->console->write('Client ID ' . $clientId . ' already exists', Color::RED);
                 $clientId = '';
             }
         }
@@ -262,28 +277,28 @@ class ClientController extends AbstractActionController
             $secretVerify = $secretPrompt->show();
 
             if ($secret !== $secretVerify) {
-                $console->write("Password verification does not match.  Please try again.\n", Color::YELLOW);
+                $this->console->write("Password verification does not match.  Please try again.\n", Color::YELLOW);
                 continue;
             }
 
             $bcrypt = new Bcrypt();
-            $bcrypt->setCost(14);
+            $bcrypt->setCost($config['bcrypt_cost']);
             $clientEntity->setSecret($bcrypt->create($secret));
         }
 
         // Get the Redirect URI
-        $console->write("Current Value: " . $clientEntity->getRedirectUri() . "\n", Color::CYAN);
+        $this->console->write("Current Value: " . $clientEntity->getRedirectUri() . "\n", Color::CYAN);
         $redirectUri = Prompt\Line::prompt("Redirect URI.  Not required: ", true, 255);
         $clientEntity->setRedirectUri($redirectUri);
 
         // Get Grant Type(s)
-        $console->write("Current Value: " . implode(',', $clientEntity->getGrantType()) . "\n", Color::CYAN);
+        $this->console->write("Current Value: " . implode(',', $clientEntity->getGrantType()) . "\n", Color::CYAN);
 
-        $console->write("Default Grant Types\n", Color::YELLOW);
-        $console->write("authorization_code\n", Color::CYAN);
-        $console->write("access_token\n", Color::CYAN);
-        $console->write("refresh_token\n", Color::CYAN);
-        $console->write("urn:ietf:params:oauth:grant-type:jwt-bearer\n", Color::CYAN);
+        $this->console->write("Default Grant Types\n", Color::YELLOW);
+        $this->console->write("authorization_code\n", Color::CYAN);
+        $this->console->write("access_token\n", Color::CYAN);
+        $this->console->write("refresh_token\n", Color::CYAN);
+        $this->console->write("urn:ietf:params:oauth:grant-type:jwt-bearer\n", Color::CYAN);
 
         $grantType = Prompt\Line::prompt("Grant Types, comma delimited.  Not required: ", true, 255);
         $clientEntity->setGrantType(explode(',', $grantType));
@@ -292,13 +307,13 @@ class ClientController extends AbstractActionController
         $clientScopes = new ArrayCollection();
         while (true) {
             if (sizeof($clientEntity->getScope())) {
-                $console->write("Current Scope(s)\n", Color::YELLOW);
+                $this->console->write("Current Scope(s)\n", Color::YELLOW);
                 foreach ($clientEntity->getScope() as $scope) {
-                    $console->write($scope->getScope() . "\n", Color::CYAN);
+                    $this->console->write($scope->getScope() . "\n", Color::CYAN);
                 }
             }
 
-            $scopeArray = $objectManager->getRepository(
+            $scopeArray = $this->getObjectManager()->getRepository(
                 $config['mapping']['Scope']['entity']
             )->findBy(array(), array('id' => 'ASC'));
 
@@ -317,15 +332,15 @@ class ClientController extends AbstractActionController
             }
 
             if (!$options) {
-                $console->write("No Scopes exist.\n", Color::RED);
+                $this->console->write("No Scopes exist.\n", Color::RED);
                 break;
             }
 
             if (sizeof($clientScopes)) {
-                $console->write("Selected Scopes\n", Color::YELLOW);
+                $this->console->write("Selected Scopes\n", Color::YELLOW);
 
                 foreach ($clientScopes as $scope) {
-                    $console->write($scope->getScope() . "\n", Color::CYAN);
+                    $this->console->write($scope->getScope() . "\n", Color::CYAN);
                 }
             }
 
@@ -336,7 +351,7 @@ class ClientController extends AbstractActionController
                 false
             );
 
-            if (!$answer) {
+            if (! $answer) {
                 foreach ($clientEntity->getScope() as $scope) {
                     $scope->removeClient($clientEntity);
                     $clientEntity->removeScope($scope);
@@ -357,32 +372,30 @@ class ClientController extends AbstractActionController
             }
         }
 
-        $objectManager->flush();
+        $this->getObjectManager()->flush();
 
-        $console->write("Client updated\n", Color::GREEN);
+        $this->console->write("Client updated\n", Color::GREEN);
     }
 
     public function listAction()
     {
-        $applicationConfig = $this->getServiceLocator()->get('config');
-        $config = $applicationConfig['zf-oauth2-doctrine']['default'];
-        $console = $this->getServiceLocator()->get('console');
-        $objectManager = $this->getServiceLocator()->get($config['object_manager']);
+        $configSection = ($this->params()->fromRoute('config')) ?: 'default';
+        $config = $this->config[$configSection];
 
         // Make sure that we are running in a console and the user has not tricked our
         // application into running this action from a public web server.
         $request = $this->getRequest();
-        if (!$request instanceof ConsoleRequest) {
+        if (! $request instanceof ConsoleRequest) {
             throw new RuntimeException('You can only use this action from a console.');
         }
 
-        $clients = $objectManager->getRepository(
+        $clients = $this->getObjectManager()->getRepository(
             $config['mapping']['Client']['entity']
         )->findBy(array(), array('id' => 'ASC'));
 
-        $console->write("id\tclientId\tredirectUri\tgrantType\n", Color::YELLOW);
+        $this->console->write("id\tclientId\tredirectUri\tgrantType\n", Color::YELLOW);
         foreach ($clients as $client) {
-            $console->write(
+            $this->console->write(
                   $client->getId()
                 . "\t"
                 . $client->getClientId()
@@ -397,30 +410,28 @@ class ClientController extends AbstractActionController
 
     public function deleteAction()
     {
-        $applicationConfig = $this->getServiceLocator()->get('config');
-        $config = $applicationConfig['zf-oauth2-doctrine']['default'];
-        $console = $this->getServiceLocator()->get('console');
-        $objectManager = $this->getServiceLocator()->get($config['object_manager']);
+        $configSection = ($this->params()->fromRoute('config')) ?: 'default';
+        $config = $this->config[$configSection];
 
         // Make sure that we are running in a console and the user has not tricked our
         // application into running this action from a public web server.
         $request = $this->getRequest();
-        if (!$request instanceof ConsoleRequest) {
+        if (! $request instanceof ConsoleRequest) {
             throw new RuntimeException('You can only use this action from a console.');
         }
 
-        $client = $objectManager->getRepository(
+        $client = $this->getObjectManager()->getRepository(
             $config['mapping']['Client']['entity']
         )->find($this->getRequest()->getParam('id'));
 
-        if (!$client) {
-            $console->write("Client not found\n", Color::RED);
+        if (! $client) {
+            $this->console->write("Client not found\n", Color::RED);
             return;
         }
 
-        $objectManager->remove($client);
-        $objectManager->flush();
+        $this->getObjectManager()->remove($client);
+        $this->getObjectManager()->flush();
 
-        $console->write("Client deleted\n", Color::GREEN);
+        $this->console->write("Client deleted\n", Color::GREEN);
     }
 }
