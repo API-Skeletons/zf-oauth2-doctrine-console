@@ -1,6 +1,11 @@
 Console Management of an Apigility Doctrine OAuth2 server
 =========================================================
 
+Versions
+--------
+
+Version 1.x is for php 5.5 to 7.0.  Version 2.0 and up is for PHP 7.1 and up.
+
 
 About
 -----
