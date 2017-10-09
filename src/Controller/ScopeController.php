@@ -2,35 +2,19 @@
 
 namespace ZF\OAuth2\Doctrine\Console\Controller;
 
-use Zend\Mvc\Console\Controller\AbstractConsoleController;
 use Zend\View\Model\ViewModel;
 use Zend\Console\Request as ConsoleRequest;
 use Zend\Console\Adapter\AdapterInterface as Console;
 use Zend\Console\ColorInterface as Color;
 use Zend\Console\Prompt;
 use RuntimeException;
-use Doctrine\Common\Persistence\ObjectManager;
-use DoctrineModule\Persistence\ObjectManagerAwareInterface;
-use DoctrineModule\Persistence\ProvidesObjectManager;
 
-class ScopeController extends AbstractConsoleController implements
-    ObjectManagerAwareInterface
+class ScopeController extends AbstractConsoleController
 {
-    use ProvidesObjectManager;
-
-    private $config;
-
-    public function __construct(ObjectManager $objectManager, Console $console, array $config)
-    {
-        $this->setObjectManager($objectManager);
-        $this->setConsole($console);
-        $this->config = $config;
-    }
-
     public function createAction()
     {
         $configSection = ($this->params()->fromRoute('config')) ?: 'default';
-        $config = $this->config[$configSection];
+        $config = $this->getConfig()[$configSection];
 
         // Make sure that we are running in a console and the user has not tricked our
         // application into running this action from a public web server.
@@ -57,7 +41,7 @@ class ScopeController extends AbstractConsoleController implements
     public function updateAction()
     {
         $configSection = ($this->params()->fromRoute('config')) ?: 'default';
-        $config = $this->config[$configSection];
+        $config = $this->getConfig()[$configSection];
 
         // Make sure that we are running in a console and the user has not tricked our
         // application into running this action from a public web server.
@@ -88,7 +72,7 @@ class ScopeController extends AbstractConsoleController implements
     public function listAction()
     {
         $configSection = ($this->params()->fromRoute('config')) ?: 'default';
-        $config = $this->config[$configSection];
+        $config = $this->getConfig()[$configSection];
 
         // Make sure that we are running in a console and the user has not tricked our
         // application into running this action from a public web server.
@@ -118,7 +102,7 @@ class ScopeController extends AbstractConsoleController implements
     public function deleteAction()
     {
         $configSection = ($this->params()->fromRoute('config')) ?: 'default';
-        $config = $this->config[$configSection];
+        $config = $this->getConfig()[$configSection];
 
         // Make sure that we are running in a console and the user has not tricked our
         // application into running this action from a public web server.

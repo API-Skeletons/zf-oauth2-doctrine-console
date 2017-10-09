@@ -21,22 +21,22 @@ class Module implements
     public function getConsoleUsage(Console $console)
     {
         return array(
-            'oauth2:client:create' => 'Create client',
-            'oauth2:client:list' => 'List clients',
-            'oauth2:client:update --id=#' => 'Update client',
-            'oauth2:client:delete --id=#' => 'Delete client',
+            'oauth2:client:create [--config=]' => 'Create client',
+            'oauth2:client:list [--config=]' => 'List clients',
+            'oauth2:client:update --id=# [--config=]' => 'Update client',
+            'oauth2:client:delete --id=# [--config=]' => 'Delete client',
 
-            'oauth2:scope:create' => 'Create scope',
-            'oauth2:scope:list' => 'List scopes',
-            'oauth2:scope:update --id=#' => 'Update scope',
-            'oauth2:scope:delete --id=#' => 'Delete scope',
+            'oauth2:scope:create [--config=]' => 'Create scope',
+            'oauth2:scope:list [--config=]' => 'List scopes',
+            'oauth2:scope:update --id=# [--config=]' => 'Update scope',
+            'oauth2:scope:delete --id=# [--config=]' => 'Delete scope',
 
-            'oauth2:public-key:create --id=#' => 'Create public key.  id is a client record.',
-            'oauth2:public-key:delete --id=#' => 'Delete public key.  id is a client record.',
+            'oauth2:public-key:create --id=# [--config=]' => 'Create public key.  id is a client record.',
+            'oauth2:public-key:delete --id=# [--config=]' => 'Delete public key.  id is a client record.',
 
-            'oauth2:jwt:create --id=#' => 'Create a JWT entry.  id is a client record.',
-            'oauth2:jwt:list' => 'List JWT entries',
-            'oauth2:jwt:delete --id=#' => 'Delete a JWT entry.  id is a jwt record.',
+            'oauth2:jwt:create --id=# [--config=]' => 'Create a JWT entry.  id is a client record.',
+            'oauth2:jwt:list [--config=]' => 'List JWT entries',
+            'oauth2:jwt:delete --id=# [--config=]' => 'Delete a JWT entry.  id is a jwt record.',
         );
     }
 
@@ -53,12 +53,17 @@ class Module implements
     }
 
     /**
-     * Retrieve module configuration
+     * Provide default configuration.
      *
-     * @return array
+     * @param return array
      */
     public function getConfig()
     {
-        return include __DIR__ . '/config/module.config.php';
+        $provider = new ConfigProvider();
+
+        return [
+            'controllers' => $provider->getControllerDependencyConfig(),
+            'console' => ['router' => $provider->getConsoleRouterConfig()],
+        ];
     }
 }
