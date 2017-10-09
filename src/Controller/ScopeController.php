@@ -2,27 +2,40 @@
 
 namespace ZF\OAuth2\Doctrine\Console\Controller;
 
-use Zend\Mvc\Controller\AbstractActionController;
+use Zend\Mvc\Console\Controller\AbstractConsoleController;
 use Zend\View\Model\ViewModel;
 use Zend\Console\Request as ConsoleRequest;
 use Zend\Console\Adapter\AdapterInterface as Console;
 use Zend\Console\ColorInterface as Color;
 use Zend\Console\Prompt;
 use RuntimeException;
+use Doctrine\Common\Persistence\ObjectManager;
+use DoctrineModule\Persistence\ObjectManagerAwareInterface;
+use DoctrineModule\Persistence\ProvidesObjectManager;
 
-class ScopeController extends AbstractActionController
+class ScopeController extends AbstractConsoleController implements
+    ObjectManagerAwareInterface
 {
+    use ProvidesObjectManager;
+
+    private $config;
+
+    public function __construct(ObjectManager $objectManager, Console $console, array $config)
+    {
+        $this->setObjectManager($objectManager);
+        $this->setConsole($console);
+        $this->config = $config;
+    }
+
     public function createAction()
     {
-        $applicationConfig = $this->getServiceLocator()->get('config');
-        $config = $applicationConfig['zf-oauth2-doctrine']['default'];
-        $console = $this->getServiceLocator()->get('console');
-        $objectManager = $this->getServiceLocator()->get($config['object_manager']);
+        $configSection = ($this->params()->fromRoute('config')) ?: 'default';
+        $config = $this->config[$configSection];
 
         // Make sure that we are running in a console and the user has not tricked our
         // application into running this action from a public web server.
         $request = $this->getRequest();
-        if (!$request instanceof ConsoleRequest) {
+        if (! $request instanceof ConsoleRequest) {
             throw new RuntimeException('You can only use this action from a console.');
         }
 
@@ -35,96 +48,98 @@ class ScopeController extends AbstractActionController
         $default = Prompt\Confirm::prompt('Is this a default scope? [y/n] ', 'y', 'n');
         $scopeEntity->setIsDefault($default == 'y');
 
-        $objectManager->persist($scopeEntity);
-        $objectManager->flush();
+        $this->getObjectManager()->persist($scopeEntity);
+        $this->getObjectManager()->flush();
 
-        $console->write("Scope created\n", Color::GREEN);
+        $this->getConsole()->writeLine("Scope created", Color::GREEN);
     }
 
     public function updateAction()
     {
-        $applicationConfig = $this->getServiceLocator()->get('config');
-        $config = $applicationConfig['zf-oauth2-doctrine']['default'];
-        $console = $this->getServiceLocator()->get('console');
-        $objectManager = $this->getServiceLocator()->get($config['object_manager']);
+        $configSection = ($this->params()->fromRoute('config')) ?: 'default';
+        $config = $this->config[$configSection];
 
         // Make sure that we are running in a console and the user has not tricked our
         // application into running this action from a public web server.
         $request = $this->getRequest();
-        if (!$request instanceof ConsoleRequest) {
+        if (! $request instanceof ConsoleRequest) {
             throw new RuntimeException('You can only use this action from a console.');
         }
 
-        $scopeEntity = $objectManager->getRepository(
-            $config['mapping']['Scope']['entity']
-        )->find($this->getRequest()->getParam('id'));
+        $scopeEntity = $this->getObjectManager()
+            ->getRepository($config['mapping']['Scope']['entity'])
+            ->find($this->getRequest()->getParam('id'));
 
         // Get the Scope
-        $console->write("Current Value: " . $scopeEntity->getScope() . "\n", Color::CYAN);
+        $this->getConsole()->writeLine("Current Value: " . $scopeEntity->getScope(), Color::CYAN);
         $scope = Prompt\Line::prompt("Scope: ", false);
         $scopeEntity->setScope($scope);
 
         $currentDefault = ($scopeEntity->getIsDefault()) ? 'Y': 'N';
-        $console->write("Current Value: " . $currentDefault . "\n", Color::CYAN);
+        $this->getConsole()->writeLine("Current Value: " . $currentDefault, Color::CYAN);
         $default = Prompt\Confirm::prompt('Is this a default scope? [y/n] ', 'y', 'n');
         $scopeEntity->setIsDefault($default == 'y');
 
-        $objectManager->flush();
+        $this->getObjectManager()->flush();
 
-        $console->write("Scope updated\n", Color::GREEN);
+        $this->getConsole()->write("Scope updated\n", Color::GREEN);
     }
 
     public function listAction()
     {
-        $applicationConfig = $this->getServiceLocator()->get('config');
-        $config = $applicationConfig['zf-oauth2-doctrine']['default'];
-        $console = $this->getServiceLocator()->get('console');
-        $objectManager = $this->getServiceLocator()->get($config['object_manager']);
+        $configSection = ($this->params()->fromRoute('config')) ?: 'default';
+        $config = $this->config[$configSection];
 
         // Make sure that we are running in a console and the user has not tricked our
         // application into running this action from a public web server.
         $request = $this->getRequest();
-        if (!$request instanceof ConsoleRequest) {
+        if (! $request instanceof ConsoleRequest) {
             throw new RuntimeException('You can only use this action from a console.');
         }
 
-        $scopes = $objectManager->getRepository(
-            $config['mapping']['Scope']['entity']
-        )->findBy(array(), array('id' => 'ASC'));
+        $scopes = $this->getObjectManager()
+            ->getRepository($config['mapping']['Scope']['entity'])
+            ->findBy(array(), array('id' => 'ASC'));
 
-        $console->write("id\tdefault\tscope\n", Color::YELLOW);
+        $this->getConsole()->writeLine("id\tdefault\tscope", Color::YELLOW);
         foreach ($scopes as $scope) {
             $default = ($scope->getIsDefault()) ? 'Y': 'N';
-            $console->write($scope->getId() . "\t" . $default . "\t" . $scope->getScope() . "\n", Color::CYAN);
+            $this->getConsole()->writeLine(
+                $scope->getId()
+                . "\t"
+                . $default
+                . "\t"
+                . $scope->getScope(),
+                Color::CYAN
+            );
         }
     }
 
     public function deleteAction()
     {
-        $applicationConfig = $this->getServiceLocator()->get('config');
-        $config = $applicationConfig['zf-oauth2-doctrine']['default'];
-        $console = $this->getServiceLocator()->get('console');
-        $objectManager = $this->getServiceLocator()->get($config['object_manager']);
+        $configSection = ($this->params()->fromRoute('config')) ?: 'default';
+        $config = $this->config[$configSection];
 
         // Make sure that we are running in a console and the user has not tricked our
         // application into running this action from a public web server.
         $request = $this->getRequest();
-        if (!$request instanceof ConsoleRequest) {
+        if (! $request instanceof ConsoleRequest) {
             throw new RuntimeException('You can only use this action from a console.');
         }
 
-        $scope = $objectManager->getRepository(
-            $config['mapping']['Scope']['entity']
-        )->find($this->getRequest()->getParam('id'));
+        $scope = $this->getObjectManager()
+            ->getRepository($config['mapping']['Scope']['entity'])
+            ->find($this->getRequest()->getParam('id'));
 
-        if (!$scope) {
-            $console->write("Scope not found\n", Color::RED);
+        if (! $scope) {
+            $this->getConsole()->writeLine("Scope not found", Color::RED);
+
             return;
         }
 
-        $objectManager->remove($scope);
-        $objectManager->flush();
+        $this->getObjectManager()->remove($scope);
+        $this->getObjectManager()->flush();
 
-        $console->write("Scope deleted\n", Color::GREEN);
+        $this->getConsole()->writeLine("Scope deleted", Color::GREEN);
     }
 }

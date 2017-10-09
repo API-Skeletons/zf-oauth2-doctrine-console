@@ -5,8 +5,6 @@ namespace ZF\OAuth2\Doctrine\Console;
 return array(
     'controllers' => array(
         'invokables' => array(
-            'ZF\OAuth2\Doctrine\Console\Controller\Scope' =>
-                'ZF\OAuth2\Doctrine\Console\Controller\ScopeController',
             'ZF\OAuth2\Doctrine\Console\Controller\PublicKey' =>
                 'ZF\OAuth2\Doctrine\Console\Controller\PublicKeyController',
         ),
@@ -15,6 +13,8 @@ return array(
                 Controller\ClientControllerFactory::class,
             Controller\JwtController::class =>
                 Controller\JwtControllerFactory::class,
+            Controller\ScopeController::class =>
+                Controller\ScopeControllerFactory::class,
         ],
     ),
 
@@ -32,7 +32,7 @@ return array(
                 ),
                 'oauth2-client-update' => array(
                     'options' => array(
-                        'route'    => 'oauth2:client:update --id=:id [--config=]',
+                        'route'    => 'oauth2:client:update --id= [--config=]',
                         'defaults' => array(
                             'controller' => Controller\ClientController::class,
                             'action'     => 'update'
@@ -41,7 +41,7 @@ return array(
                 ),
                 'oauth2-client-delete' => array(
                     'options' => array(
-                        'route'    => 'oauth2:client:delete --id=:id [--config=]',
+                        'route'    => 'oauth2:client:delete --id= [--config=]',
                         'defaults' => array(
                             'controller' => Controller\ClientController::class,
                             'action'     => 'delete'
@@ -59,36 +59,36 @@ return array(
                 ),
                 'oauth2-scope-create' => array(
                     'options' => array(
-                        'route'    => 'oauth2:scope:create',
+                        'route'    => 'oauth2:scope:create [--config=]',
                         'defaults' => array(
-                            'controller' => 'ZF\OAuth2\Doctrine\Console\Controller\Scope',
+                            'controller' => Controller\ScopeController::class,
                             'action'     => 'create'
                         ),
                     ),
                 ),
                 'oauth2-scope-update' => array(
                     'options' => array(
-                        'route'    => 'oauth2:scope:update --id=:id',
+                        'route'    => 'oauth2:scope:update --id= [--config=]',
                         'defaults' => array(
-                            'controller' => 'ZF\OAuth2\Doctrine\Console\Controller\Scope',
+                            'controller' => Controller\ScopeController::class,
                             'action'     => 'update'
                         ),
                     ),
                 ),
                 'oauth2-scope-delete' => array(
                     'options' => array(
-                        'route'    => 'oauth2:scope:delete --id=:id',
+                        'route'    => 'oauth2:scope:delete --id= [--config=]',
                         'defaults' => array(
-                            'controller' => 'ZF\OAuth2\Doctrine\Console\Controller\Scope',
+                            'controller' => Controller\ScopeController::class,
                             'action'     => 'delete'
                         ),
                     ),
                 ),
                 'oauth2-scope-list' => array(
                     'options' => array(
-                        'route'    => 'oauth2:scope:list',
+                        'route'    => 'oauth2:scope:list [--config=]',
                         'defaults' => array(
-                            'controller' => 'ZF\OAuth2\Doctrine\Console\Controller\Scope',
+                            'controller' => Controller\ScopeController::class,
                             'action'     => 'list'
                         ),
                     ),
