@@ -1,6 +1,9 @@
 Console Management of an Apigility Doctrine OAuth2 server
 =========================================================
 
+[![Gitter](https://badges.gitter.im/api-skeletons/open-source.svg)](https://gitter.im/api-skeletons/open-source)
+[![Total Downloads](https://poser.pugx.org/api-skeletons/zf-oauth2-doctrine-console/downloads)](https://packagist.org/packages/api-skeletons/zf-oauth2-doctrine-console)
+
 Versions
 --------
 
