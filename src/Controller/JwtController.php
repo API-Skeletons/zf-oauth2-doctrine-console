@@ -2,10 +2,10 @@
 
 namespace ZF\OAuth2\Doctrine\Console\Controller;
 
-use Zend\Console\Request as ConsoleRequest;
-use Zend\Console\Adapter\AdapterInterface as Console;
-use Zend\Console\ColorInterface as Color;
-use Zend\Console\Prompt;
+use Laminas\Console\Request as ConsoleRequest;
+use Laminas\Console\Adapter\AdapterInterface as Console;
+use Laminas\Console\ColorInterface as Color;
+use Laminas\Console\Prompt;
 use RuntimeException;
 use ZF\OAuth2\Doctrine\Entity;
 use Doctrine\Common\Persistence\ObjectManager;

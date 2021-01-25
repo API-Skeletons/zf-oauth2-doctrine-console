@@ -7,9 +7,9 @@
 namespace ZF\OAuth2\Doctrine\Console;
 
 use ZF\OAuth2\Client\Service\OAuth2Service;
-use Zend\ModuleManager\Feature\ConfigProviderInterface;
-use Zend\ModuleManager\Feature\ConsoleUsageProviderInterface;
-use Zend\Console\Adapter\AdapterInterface as Console;
+use Laminas\ModuleManager\Feature\ConfigProviderInterface;
+use Laminas\ModuleManager\Feature\ConsoleUsageProviderInterface;
+use Laminas\Console\Adapter\AdapterInterface as Console;
 
 /**
  * ZF2 module
@@ -47,7 +47,7 @@ class Module implements
      */
     public function getAutoloaderConfig()
     {
-        return array('Zend\Loader\StandardAutoloader' => array('namespaces' => array(
+        return array('Laminas\Loader\StandardAutoloader' => array('namespaces' => array(
             __NAMESPACE__ => __DIR__ . '/src/',
         )));
     }

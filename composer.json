@@ -10,8 +10,8 @@
     ],
     "require": {
         "php": "^7.1|~8.0",
-        "api-skeletons/zf-oauth2-doctrine": "~2.0 || ^3.0",
-        "zendframework/zend-mvc-console": "~1.1"
+        "samsonasik/zf-oauth2-doctrine": "^4.0",
+        "laminas/laminas-mvc-console": "~1.1"
     },
     "autoload": {
         "psr-4": {
@@ -23,7 +23,7 @@
         ]
     },
     "extra": {
-        "zf": {
+        "laminas": {
             "component": "ZF\\OAuth2\\Doctrine\\Console",
             "config-provider": "ZF\\OAuth2\\Doctrine\\Console\\ConfigProvider"
         }

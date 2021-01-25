@@ -3,11 +3,11 @@
 namespace ZF\OAuth2\Doctrine\Console\Controller;
 
 use RuntimeException;
-use Zend\Console\Request as ConsoleRequest;
-use Zend\Console\Adapter\AdapterInterface as Console;
-use Zend\Console\ColorInterface as Color;
-use Zend\Console\Prompt;
-use Zend\Crypt\Password\Bcrypt;
+use Laminas\Console\Request as ConsoleRequest;
+use Laminas\Console\Adapter\AdapterInterface as Console;
+use Laminas\Console\ColorInterface as Color;
+use Laminas\Console\Prompt;
+use Laminas\Crypt\Password\Bcrypt;
 use Doctrine\Common\Collections\ArrayCollection;
 
 final class ClientController extends AbstractConsoleController
