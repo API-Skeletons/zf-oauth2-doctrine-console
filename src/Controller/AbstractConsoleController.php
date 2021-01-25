@@ -2,8 +2,8 @@
 
 namespace ZF\OAuth2\Doctrine\Console\Controller;
 
-use Zend\Mvc\Console\Controller\AbstractConsoleController as ZendAbstractConsoleController;
-use Zend\Console\Adapter\AdapterInterface as Console;
+use Laminas\Mvc\Console\Controller\AbstractConsoleController as ZendAbstractConsoleController;
+use Laminas\Console\Adapter\AdapterInterface as Console;
 use Doctrine\Common\Persistence\ObjectManager;
 use DoctrineModule\Persistence\ObjectManagerAwareInterface;
 use DoctrineModule\Persistence\ProvidesObjectManager;
